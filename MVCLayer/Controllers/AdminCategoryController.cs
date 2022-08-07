@@ -11,15 +11,10 @@ using System.Web.Mvc;
 
 namespace MVCLayer.Controllers
 {
-    public class CategoryController : Controller
+    public class AdminCategoryController : Controller
     {
-        // GET: Category
         CategoryManager cm = new CategoryManager(new EfCategoryDal());
         public ActionResult Index()
-        {
-            return View();
-        }
-        public ActionResult GetCategoryList()
         {
             var categoryValues = cm.GetListCategory();
             return View(categoryValues);
@@ -29,26 +24,25 @@ namespace MVCLayer.Controllers
         {
             return View();
         }
-
         [HttpPost]
         public ActionResult AddCategory(Category p)
         {
             CategoryValidatior categoryValidator = new CategoryValidatior();
-            ValidationResult result = categoryValidator.Validate(p);
-            if (result.IsValid)
-            { 
+            ValidationResult results = categoryValidator.Validate(p);
+            if (results.IsValid)
+            {
                 cm.CategoryAdd(p);
-                return RedirectToAction("GetCategoryList");
+                return RedirectToAction("Index");
             }
             else
             {
-                foreach (var item in result.Errors)
+                foreach (var item in results.Errors)
                 {
                     ModelState.AddModelError(item.PropertyName, item.ErrorMessage);
                 }
             }
             return View();
-            
         }
+
     }
 }
